@@ -3,6 +3,7 @@ package com.udacity.project4.authentication
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 
+
 class LoginViewModel : ViewModel() {
 
     enum class AuthenticationState {
@@ -10,11 +11,8 @@ class LoginViewModel : ViewModel() {
     }
 
     val authenticationState = FirebaseUserLiveData().map { user ->
-        if (user != null) {
-            AuthenticationState.AUTHENTICATED
-        } else {
-            AuthenticationState.UNAUTHENTICATED
-        }
+        if (user != null) AuthenticationState.AUTHENTICATED
+        else AuthenticationState.UNAUTHENTICATED
     }
 
 }

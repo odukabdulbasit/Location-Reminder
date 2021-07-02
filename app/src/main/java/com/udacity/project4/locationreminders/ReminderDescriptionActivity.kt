@@ -15,12 +15,12 @@ import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 class ReminderDescriptionActivity : AppCompatActivity() {
 
     companion object {
-        private const val EXTRA_ReminderDataItem = "EXTRA_ReminderDataItem"
+        private const val EXTRA_REMINDER_DATA_ITEM = "extra_reminder_data_item"
 
         //        receive the reminder object after the user clicks on the notification
         fun newIntent(context: Context, reminderDataItem: ReminderDataItem): Intent {
             val intent = Intent(context, ReminderDescriptionActivity::class.java)
-            intent.putExtra(EXTRA_ReminderDataItem, reminderDataItem)
+            intent.putExtra(EXTRA_REMINDER_DATA_ITEM, reminderDataItem)
             return intent
         }
     }
@@ -28,10 +28,13 @@ class ReminderDescriptionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityReminderDescriptionBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(
-            this,
-            R.layout.activity_reminder_description
-        )
-//        TODO: Add the implementation of the reminder details
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_reminder_description)
+
+        if (intent.hasExtra(EXTRA_REMINDER_DATA_ITEM)) {
+            val reminderDataItem:ReminderDataItem = intent.getSerializableExtra(
+                EXTRA_REMINDER_DATA_ITEM) as ReminderDataItem
+            binding.reminderDataItem = intent.getSerializableExtra(EXTRA_REMINDER_DATA_ITEM) as ReminderDataItem //reminderDataItem
+            binding.executePendingBindings()
+        }
     }
 }

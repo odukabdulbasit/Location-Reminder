@@ -4,7 +4,7 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/reminderListFragment">
 
-    <fragment
+     <fragment
         android:id="@+id/reminderListFragment"
         android:name="com.udacity.project4.locationreminders.reminderslist.ReminderListFragment"
         android:label="ReminderListFragment">
@@ -27,9 +27,11 @@
             android:id="@+id/action_saveReminderFragment_to_selectLocationFragment"
             app:destination="@id/selectLocationFragment" />
     </fragment>
-    <fragment
+   <fragment
         android:id="@+id/selectLocationFragment"
         android:name="com.udacity.project4.locationreminders.savereminder.selectreminderlocation.SelectLocationFragment"
-        android:label="Select Location" />
+        android:label="Select Location">
+
+    </fragment>
 
 </navigation>

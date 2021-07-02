@@ -1,5 +1,6 @@
 package com.udacity.project4.locationreminders.savereminder
 
+import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -24,6 +25,7 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
     /**
      * Clear the live data objects to start fresh next time the view model gets called
      */
+    @SuppressLint("NullSafeMutableLiveData")
     fun onClear() {
         reminderTitle.value = null
         reminderDescription.value = null

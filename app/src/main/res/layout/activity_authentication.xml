@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         tools:context=".authentication.AuthenticationActivity">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/welcome_to_the_location_reminder_app"
@@ -23,15 +23,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/login"
-            android:layout_width="300dp"
-            android:layout_height="55dp"
-            android:layout_marginBottom="47dp"
             android:text="@string/login"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
+            app:layout_constraintStart_toStartOf="parent"
+            style="@style/butonStyle"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

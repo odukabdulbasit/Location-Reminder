@@ -6,12 +6,11 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.observe
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
+import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.R
 import com.udacity.project4.databinding.ActivityAuthenticationBinding
-import com.udacity.project4.locationreminders.RemindersActivity
 
 /**
  * This class should be the starting point of the app, It asks the users to sign in / register, and redirects the
@@ -19,8 +18,8 @@ import com.udacity.project4.locationreminders.RemindersActivity
  */
 class AuthenticationActivity : AppCompatActivity() {
     companion object {
-        val TAG = "LoginActivity"
-        const val SIGN_IN_CODE_REQUEST = 1001
+        val TAG: String = AuthenticationActivity::class.java.simpleName
+        const val SIGN_IN_CODE_REQUEST = 100
     }
 
     private lateinit var binding: ActivityAuthenticationBinding
@@ -31,7 +30,7 @@ class AuthenticationActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_authentication)
 
         binding.login.setOnClickListener {
-            launchSignInFlow()
+            performLogin()
         }
 
         viewModel.authenticationState.observe(this) { authenticationState ->
@@ -41,7 +40,7 @@ class AuthenticationActivity : AppCompatActivity() {
         }
     }
 
-    private fun launchSignInFlow() {
+    private fun performLogin() {
         val providers =
             arrayListOf(
                 AuthUI.IdpConfig.EmailBuilder().build(),
