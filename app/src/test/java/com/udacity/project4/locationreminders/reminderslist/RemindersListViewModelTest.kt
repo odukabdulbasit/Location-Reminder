@@ -13,6 +13,7 @@ import com.udacity.project4.locationreminders.reminderslist.RemindersListViewMod
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers
+import org.hamcrest.MatcherAssert
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.junit.*
@@ -72,8 +73,13 @@ class RemindersListViewModelTest {
         // WHEN - Get the reminders
         val loadedlist = remindersLocalDataSource.getReminders()
 
+        remindersListViewModel.refresh()
+        MatcherAssert.assertThat(remindersListViewModel.empty.getOrAwaitValue(), `is`(true))
+        MatcherAssert.assertThat(remindersListViewModel.error.getOrAwaitValue(), `is`(true))
         // THEN - Error is returned
         assertThat((loadedlist as Result.Error), CoreMatchers.`is`(Result.Error("No tasks")))
+        //live Data testing
+        Assert.assertEquals(remindersListViewModel.remindersList, loadedlist )
         Assert.assertEquals(remindersLocalDataSource.reminders, loadedlist )
 
     }
