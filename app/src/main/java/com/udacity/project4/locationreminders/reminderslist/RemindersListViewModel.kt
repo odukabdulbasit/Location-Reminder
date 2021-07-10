@@ -1,6 +1,7 @@
 package com.udacity.project4.locationreminders.reminderslist
 
 import android.app.Application
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
@@ -18,7 +19,10 @@ class RemindersListViewModel(
 ) : BaseViewModel(app) {
     // list that holds the reminder data to be displayed on the UI
     val remindersList = MutableLiveData<List<ReminderDataItem>>()
-
+    private val _dataLoading = MutableLiveData<Boolean>(false)
+    val dataLoading: LiveData<Boolean> = _dataLoading
+    lateinit var error: LiveData<Boolean>
+    lateinit var empty: LiveData<Boolean>
    /* val State = FirebaseUserLiveData().map { user ->
         if (user != null) {
             LoginViewModel.AuthenticationState.AUTHENTICATED
@@ -33,32 +37,43 @@ class RemindersListViewModel(
      */
     fun loadReminders() {
         showLoading.value = true
+        _dataLoading.value = true
         viewModelScope.launch {
             //interacting with the dataSource has to be through a coroutine
             val result = dataSource.getReminders()
             showLoading.postValue(false)
+            _dataLoading.value = false
             when (result) {
                 is Result.Success<*> -> {
                     val dataList = ArrayList<ReminderDataItem>()
                     dataList.addAll((result.data as List<ReminderDTO>).map { reminder ->
                         //map the reminder data from the DB to the be ready to be displayed on the UI
                         ReminderDataItem(
-                            reminder.title,
-                            reminder.description,
-                            reminder.location,
-                            reminder.latitude,
-                            reminder.longitude,
-                            reminder.id
+                                reminder.title,
+                                reminder.description,
+                                reminder.location,
+                                reminder.latitude,
+                                reminder.longitude,
+                                reminder.id
                         )
                     })
                     remindersList.value = dataList
                 }
                 is Result.Error ->
-                    showSnackBar.value = result.message?:""
+                showSnackBar.value = result.message?:""
             }
 
             //check if no data has to be shown
             invalidateShowNoData()
+        }
+    }
+    fun refresh() {
+        showLoading.value = true
+        viewModelScope.launch {
+            dataSource.refreshReminders()
+            error = dataSource.observeReminders().map { it is Result.Error }
+            empty = dataSource.observeReminders().map { (it as? Result.Success)?.data.isNullOrEmpty() }
+            showLoading.value = false
         }
     }
 
