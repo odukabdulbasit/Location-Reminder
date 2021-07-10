@@ -1,5 +1,9 @@
 package com.udacity.project4.locationreminders.data.local
 
+import android.annotation.SuppressLint
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
@@ -19,6 +23,7 @@ class RemindersLocalRepository(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ReminderDataSource {
 
+    private val observableReminders = MutableLiveData<Result<List<ReminderDTO>>>()
     /**
      * Get the reminders list from the local db
      * @return Result the holds a Success with all the reminders or an Error object with the error message
@@ -65,5 +70,33 @@ class RemindersLocalRepository(
         withContext(ioDispatcher) {
             remindersDao.deleteAllReminders()
         }
+    }
+
+    @SuppressLint("NullSafeMutableLiveData")
+    override suspend fun refreshReminders() {
+        observableReminders.value = getReminders()
+    }
+
+    override suspend fun refreshReminder(id: String) {
+        refreshReminders()
+    }
+
+    override suspend fun observeReminders(): LiveData<Result<List<ReminderDTO>>> {
+        return observableReminders
+    }
+
+    override suspend fun observeTask(reminderId: String): LiveData<Result<ReminderDTO>> {
+        return observableReminders.map { result ->
+            when (result) {
+                is Result.Success -> {
+                    Result.Success(result.data.first { it.id == reminderId })
+                }
+                is Result.Error -> {
+                    Result.Error(result.message)
+                }
+                else -> Result.Error("")
+            }
+        }
+
     }
 }
