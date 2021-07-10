@@ -1,5 +1,8 @@
 package com.udacity.project4.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
@@ -9,6 +12,7 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>? =
         mutableListOf()) :
     ReminderDataSource {
 
+    private val observableReminders = MutableLiveData<Result<List<ReminderDTO>>>()
     /*override suspend fun getReminders(): Result<List<ReminderDTO>> =
             reminders?.let {
         Result.Success(ArrayList(it))
@@ -22,9 +26,9 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>? =
 
     override suspend fun getReminders(): Result<List<ReminderDTO>> {
         //TODO("Return the reminders")
-        if (shouldReturnError) {
+        /*if (shouldReturnError) {
             return Result.Error("No tasks")
-        }
+        }*/
         reminders?.let { return Result.Success(ArrayList(it)) }
         return Result.Error("Tasks not found")
 
@@ -36,9 +40,9 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>? =
     }
 
     override suspend fun getReminder(id: String): Result<ReminderDTO>{
-        if (shouldReturnError){
+        /*if (shouldReturnError){
             return Result.Error("No tasks")
-        }
+        }*/
         return reminders?.firstOrNull { it.id == id }?.let {
             Result.Success(it)
         } ?: Result.Error("Reminder $id not found")
@@ -50,5 +54,32 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>? =
 
     override suspend fun deleteAllReminders() {
         reminders?.clear()
+    }
+
+    override suspend fun refreshReminders() {
+        observableReminders.value = getReminders()
+    }
+
+    override suspend fun refreshReminder(id: String) {
+        refreshReminders()
+    }
+
+    override suspend fun observeReminders(): LiveData<Result<List<ReminderDTO>>> {
+        return observableReminders
+    }
+
+    override suspend fun observeTask(reminderId: String): LiveData<Result<ReminderDTO>> {
+        return observableReminders.map { result ->
+            when (result) {
+                is Result.Success -> {
+                    Result.Success(result.data.first { it.id == reminderId })
+                }
+                is Result.Error -> {
+                    Result.Error(result.message)
+                }
+                else -> Result.Error("")
+            }
+        }
+
     }
 }
