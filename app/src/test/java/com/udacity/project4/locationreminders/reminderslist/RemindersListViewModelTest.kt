@@ -73,6 +73,7 @@ class RemindersListViewModelTest {
         // WHEN - Get the reminders
         val loadedlist = remindersLocalDataSource.getReminders()
 
+        //refesh function from fakedatasource
         remindersListViewModel.refresh()
         MatcherAssert.assertThat(remindersListViewModel.empty.getOrAwaitValue(), `is`(true))
         MatcherAssert.assertThat(remindersListViewModel.error.getOrAwaitValue(), `is`(false))
