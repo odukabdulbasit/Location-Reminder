@@ -21,6 +21,7 @@ class RemindersListViewModel(
     val remindersList = MutableLiveData<List<ReminderDataItem>>()
     private val _dataLoading = MutableLiveData<Boolean>(false)
     val dataLoading: LiveData<Boolean> = _dataLoading
+    //for observe error livedata
     lateinit var error: LiveData<Boolean>
     lateinit var empty: LiveData<Boolean>
    /* val State = FirebaseUserLiveData().map { user ->
